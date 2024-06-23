@@ -33,6 +33,12 @@ public class MyController {
     @GetMapping("/list-bucket")
     public List<S3BucketMetaData> awsBuckets() {
 
-        return  awsS3Service.listBucketObjects(s3Client, "test");
+        return  awsS3Service.listBucketObjects(s3Client, "gdv-photos");
+    }
+
+    @GetMapping("/list-all")
+    public void s3Buckets() {
+
+        awsS3Service.listBucket(s3Client);
     }
 }
