@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.config.AwsConfig;
 import com.example.demo.model.S3BucketMetaData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Service
 public class AwsS3Service {
+
 
     public static void getObjectBytes(S3Client s3, String bucketName, String keyName, String path) {
         try {
@@ -43,7 +46,15 @@ public class AwsS3Service {
         }
     }
 
-    public  List<S3BucketMetaData> listBucketObjects(S3Client s3, String bucketName) {
+    public void listBucket(S3Client s3) {
+        ListBucketsResponse response = s3.listBuckets();
+        List<Bucket> bucketList = response.buckets();
+        for (Bucket bucket : bucketList) {
+            System.out.println("Bucket name " + bucket.name());
+        }
+    }
+
+    public List<S3BucketMetaData> listBucketObjects(S3Client s3, String bucketName) {
         try {
             List<S3BucketMetaData> buckets = new ArrayList<>();
             ListObjectsRequest listObjects = ListObjectsRequest
@@ -58,7 +69,7 @@ public class AwsS3Service {
                 System.out.print("\n The object is " + calKb(myValue.size()) + " KBs");
                 System.out.print("\n The owner is " + myValue.owner());
                 S3BucketMetaData s3BucketMetaData = new S3BucketMetaData(myValue.key(), calKb(myValue.size()), myValue.owner());
-                buckets.add(s3BucketMetaData );
+                buckets.add(s3BucketMetaData);
             }
             s3.close();
             return buckets;
